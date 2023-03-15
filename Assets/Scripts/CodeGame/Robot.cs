@@ -34,10 +34,18 @@ public class Robot : Singleton<Robot>
     void OnCollisionEnter2D(Collision2D collision)
     {
         rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-
-        GameUI.Instance.EndJump();
     }
 
+    public void Run()
+    {
+        rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+    }
+
+    public void EndRun()
+    {
+        rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+    
     // Update is called once per frame
     void Update()
     {

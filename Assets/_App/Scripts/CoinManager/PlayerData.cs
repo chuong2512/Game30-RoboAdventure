@@ -14,12 +14,14 @@ public class PlayerData : BaseData
 {
     public int intDiamond;
     public int highPoint;
+    public int point;
     public int currentSkin;
     public int currentBG;
     public bool[] listSkins;
     public bool[] listBGs;
 
     public Action<int> onChangeDiamond;
+    public Action<int> onChangePoint;
 
     public override void Init()
     {
@@ -89,6 +91,15 @@ public class PlayerData : BaseData
         intDiamond += a;
 
         onChangeDiamond?.Invoke(intDiamond);
+
+        Save();
+    }
+    
+    public void AddPoint(int a)
+    {
+        point += a;
+
+        onChangePoint?.Invoke(point);
 
         Save();
     }

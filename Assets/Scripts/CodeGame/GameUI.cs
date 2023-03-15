@@ -9,38 +9,67 @@ using UnityEngine.UI;
 
 public enum State
 {
-    Jumping, Stop
+    Runing, Stop
 }
 
 public class GameUI : Singleton<GameUI>
 {
     public Button back;
-    public Button jump;
     public Button back1;
     public Button menu;
-    public background bg;
 
-    private GameObject level;
     public GameObject lose;
-    public GameObject[] levels;
 
-    public State currentState;
+    public State currentState = State.Stop;
 
-    public Slider SliderJump;
     
     // Start is called before the first frame update
     void Start()
     {
-        RandomLevel();
-
-        UpdateSlider();
+        back?.onClick.AddListener(ExitGame);
+        back1?.onClick.AddListener(ExitGame);
+        menu?.onClick.AddListener(RestartGame);
         
-        back.onClick.AddListener(ExitGame);
-        back1.onClick.AddListener(ExitGame);
-        jump.onClick.AddListener(Jump);
-        menu.onClick.AddListener(RestartGame);
+        SetState(State.Stop);
     }
 
+    public float holdDuration = 1f;
+
+    public float max = 3;
+    public float rangeMove = 0;
+    public int direction = 1;
+    
+    void Update()
+    {
+        if (currentState == State.Stop)
+        {
+            if (Input.GetMouseButton(0))
+            {
+                rangeMove += Time.deltaTime * direction;
+
+                if (rangeMove >= max)
+                {
+                    direction = -1;
+                }
+                
+                if (rangeMove < 0)
+                {
+                    direction = 1;
+                }
+                
+                cau.Instance.SetLine(rangeMove);
+            }
+            
+            if (Input.GetMouseButtonUp(0))
+            {
+                cau.Instance.SetLine(rangeMove, true);
+                rangeMove = 0;
+                SetState(State.Runing);
+            }
+        }
+    }
+
+    
     private void ExitGame()
     {
         SceneManager.LoadScene("Menu");
@@ -53,61 +82,19 @@ public class GameUI : Singleton<GameUI>
 
     public void RestartGame()
     {
-        lose.SetActive(false);
-        NextLevel();
+        SceneManager.LoadScene("Game");
     }
-
-    public void NextLevel()
-    {
-        bg.Show();
-        RandomLevel();
-    }
-
-    private void RandomLevel()
-    {
-        SetState(State.Stop);
-        
-        if (level != null)
-        {
-            Destroy(level);
-        }
-
-        level = Instantiate(levels[Random.Range(0, levels.Length)]);
-    }
-
+    
     [Button]
     public void Jump()
     {
-        SliderJump.DOKill(SliderJump.transform);
-        
-        SetState(State.Jumping);
-        
-        Robot.Instance.FrogJump(SliderJump.value * 250 + 100);
-        
-        SliderJump.gameObject.SetActive(false);
+        SetState(State.Runing);
     }
 
     private float duration = 1f;
-    
-    void UpdateSlider()
-    {
-        SliderJump.DOKill(SliderJump.transform);
-        SliderJump.value = 0;
-        SliderJump.DOValue(1, duration).OnComplete(() => SliderJump.DOValue(0, duration)).SetEase(Ease.Linear).SetLoops(-1);
-    }
-    
-    public void EndJump()
-    {
-        SetState(State.Stop);
-        
-        SliderJump.gameObject.SetActive(true);
-        UpdateSlider();
-    }
 
     public void SetState(State state)
     {
         currentState = state;
-        
-        jump.gameObject.SetActive(state == State.Stop);
     }
 }
