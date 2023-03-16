@@ -7,10 +7,10 @@ using UnityEngine.Purchasing;
 
 public class Key
 {
-    public const string PACK1 = "jump_frog_pack1";
-    public const string PACK2 = "jump_frog_pack2";
-    public const string PACK3 = "jump_frog_pack3";
-    public const string PACK4 = "jump_frog_pack4";
+    public const string PACK1 = "robot_pack1";
+    public const string PACK2 = "robot_pack2";
+    public const string PACK3 = "robot_pack3";
+    public const string PACK4 = "robot_pack4";
 }
 
 public class IAPManager : PersistentSingleton<IAPManager>, IStoreListener
